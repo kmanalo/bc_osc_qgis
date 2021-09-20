@@ -1,40 +1,39 @@
 #!/usr/bin/env bash
 
-# Load the required environment
-setup_env () {
-  module purge
+# Clean the environment
+module purge
 
-  # The qgis module should set these environment variables:
+set -x 
 
-  #   QGIS_IMAGE="/usr/local/project/ondemand/singularity/qgis/3.8.sif"
-
-  module use /usr/local/share/lmodfiles/project/ondemand
-  module load xalt/latest qgis
-}
-setup_env
-
-# Set working directory to PBS directory
-cd "${HOME}"
-
+# Create a run file to run inside Singularity Xfce container
+cat << EOF > run_qgis.sh
+#!/bin/bash
 #
 # Launch Xfce Window Manager and Panel
 #
-
-(
+# (
   export SEND_256_COLORS_TO_REMOTE=1
   export XDG_CONFIG_HOME="<%= session.staged_root.join("config") %>"
   export XDG_DATA_HOME="<%= session.staged_root.join("share") %>"
   export XDG_CACHE_HOME="$(mktemp -d)"
-  module restore
   set -x
   xfwm4 --compositor=off --daemon --sm-client-disable
   xsetroot -solid "#D3D3D3"
   xfsettingsd --sm-client-disable
-  xfce4-panel --sm-client-disable
-) &
+  xfce4-panel --sm-client-disable &
+# ) &
 
 #
-# Start QGIS
-#
+# Launch QGIS
+# 
+qgis
+EOF
 
-singularity run /usr/local/qgis/3.4.12/qgis.sif
+chmod +x run_qgis.sh
+QGIS=$(realpath ./run_qgis.sh)
+
+# Set working directory to home directory
+cd "${HOME}"
+
+singularity exec /usr/local/pace-apps/manual/packages/singularity_images/qgis-3.16.3.sif \
+	/bin/bash $QGIS

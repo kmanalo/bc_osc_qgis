@@ -1,11 +1,6 @@
 ---
 name: QGIS
 category: Interactive Apps
-subcategory: GUIs
+subcategory: Compute Node Jobs
 role: batch_connect
-description: |
-  This app will launch a [QGIS] GUI on the [Owens cluster]. You will be able to interact with the QGIS GUI
-  through a VNC session.
-
-  [QGIS]: https://qgis.org/en/site/
-  [Owens cluster]: https://www.osc.edu/resources/technical_support/supercomputers/owens
+description: "This app will launch a QGIS GUI. You will be able\r\nto interact with the QGIS GUI through a VNC session.\r\n\r\n"
